@@ -1,0 +1,7 @@
+neo4j
+neomodel
+pandas
+py2neo
+tqdm
+graphdatascience
+jupyterlab
