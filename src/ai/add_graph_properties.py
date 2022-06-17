@@ -1,13 +1,26 @@
+####################################################
+# Function to add graph computed properties to the 
+# graph model. Need at least 1 numeric property to
+# include in GraphSAGE - this provides a graph-
+# realted metric based on connectedness of each
+# node
+####################################################
+
 def add_properties(gds):
+    # Check if we've built the projection before using GDS
     exists = bool(gds.graph.exists("mimic")["exists"])
-    if exists:
+
+    # If we have, drop it - could do this more selectively, but it builds quickly 
+    # at this so can just drop the full projection as well as previously computed
+    # properties and relationships with cypher
+    if exists: 
         G = gds.graph.get("mimic")
         gds.graph.drop(G)
 
-    gds.run_cypher("MATCH ()-[r:SIMILAR]-() DELETE r")
-    gds.run_cypher("MATCH (a) REMOVE a.degree")
-    gds.run_cypher("MATCH (a) REMOVE a.embedding")
+    gds.run_cypher("MATCH (a) REMOVE a.degree") # Property for GDS-computed degree
+    gds.run_cypher("MATCH (a) REMOVE a.embedding") # Property for GraphSAGE embedding
 
+    # Now we create a projection so we can compute and write the degree property
     G, _ = gds.graph.project(
         'mimic',
         ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
@@ -15,7 +28,7 @@ def add_properties(gds):
     )
 
     try:
-        mutate = gds.degree.write(
+        gds.degree.write( # Compute and write the degree for each node in the graph
             G,
             writeProperty="degree"
         )

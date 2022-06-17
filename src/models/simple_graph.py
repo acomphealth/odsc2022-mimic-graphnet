@@ -1,5 +1,9 @@
-from neomodel import StructuredNode, StringProperty, ArrayProperty
-from neomodel import RelationshipTo, RelationshipFrom
+####################################################
+# neomodel models to reprsent the LOS data in Neo4J
+####################################################
+
+from neomodel import (ArrayProperty, RelationshipFrom, RelationshipTo,
+                      StringProperty, StructuredNode)
 
 
 class Visit(StructuredNode):
@@ -12,6 +16,7 @@ class Visit(StructuredNode):
     age = RelationshipTo("Age", "age_at_visit")
 
     dx = RelationshipTo("Diagnosis", "has_medical_hx")
+
 
 class Diagnosis(StructuredNode):
     icd = StringProperty(unique_index=True)
