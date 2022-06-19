@@ -26,8 +26,10 @@ config.DATABASE_URL = f"bolt://{username}:{password}@{host}:{port}/{database}"
 
 job = input("What job? ").lower()
 
-if job == "load": # Load from the processed data into neo4j
+if job == "loadnorel": # Load from the processed data into neo4j without dx code relationships
     simple_load.SimpleGraph().run_import(csv_path)
+elif job == "loadrel": # Load from the processed data into neo4j with dx code relationships
+    simple_load.SimpleGraph().run_import(csv_path, import_dx_rel=True)
 elif job == "feature": # Run performance evaluation on tabular data using a random forest
     eval_forest_features.run(csv_path)
 elif job == "network": # Run performance evaluation on network data using a random forest
