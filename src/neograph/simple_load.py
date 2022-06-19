@@ -4,48 +4,38 @@
 # models.simple_graph
 ####################################################
 
+import json
+import os
+
 from models.simple_graph import *
 from tqdm import tqdm
-import os
 
 
 class SimpleGraph:
     def run_import(self, csv_path, import_dx_rel = False):
         try:
             if import_dx_rel:
-                if not os.path.exists("resources/cms_icd9.txt"):
-                    # If you get this error, download ICD9 list from CMS at
-                    # https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/ICD-9-CM-v32-master-descriptions.zip
-                    # and place CMS32_DESC_SHORT_DX.txt, rename it to cms_icd9.txt and put in a 'resources' subfolder within this project's root
-                    print("Please download CMS32_DESC_SHORT_DX.txt per code comments")
-                    print("to load diagnostic data.")
+                if not os.path.exists("resources/icd9_categories.json"):
+                    # https://raw.githubusercontent.com/sirrice/icd9/master/codes_pretty_printed.json
+                    # and save as resources/icd9_categories.json
+                    print("Please download ICD9 diagnosis and group list per code comments")
                     exit()
-                
-                num_lines = 0
-                with open('resources/cms_icd9.txt') as icd_file:
-                    for line in icd_file:
-                        num_lines += 1
                     
-                with open('resources/cms_icd9.txt') as icd_file:
-                    i = 0
-                    for line in tqdm(icd_file, total=num_lines, desc="Loading dx data..."):
-                        line_text = line.strip()
-                        icd9 = line_text[0:6].strip()
-
-                        base_length = 3
-                        # For ICD9, if it start with E, base code is length 4 instead of 3 
-                        if icd9.startswith("E"):
-                            base_length = 4
-                        
-                        # This actually creates the hierarchy as a directional relationship
+                with open('resources/icd9_categories.json') as icd_file:
+                    data = json.load(icd_file)
+                    for record_group in tqdm(data, total=len(data), desc="Loading dx data..."):
                         last = None
-                        for j in range(base_length, len(icd9)):
-                            cur_icd = icd9[0:j]
+                        for record in record_group:
+                            if record['code'] is None or len(record['code']) < 1:
+                                continue
+
+                            cur_icd = record['code'].replace('.', '')
                             cur_dx = Diagnosis.get_or_create(
                                 {
                                     "icd": cur_icd
                                 }
                             )
+
                             if last is not None:
                                 cur_dx[0].parent_dx.connect(last[0])
                             last = cur_dx
