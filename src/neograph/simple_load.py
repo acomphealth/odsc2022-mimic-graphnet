@@ -29,8 +29,8 @@ class SimpleGraph:
                 with open('resources/cms_icd9.txt') as icd_file:
                     i = 0
                     for line in tqdm(icd_file, total=num_lines, desc="Loading dx data..."):
-                        fields = line.strip().split('\t')
-                        icd9 = fields[0]
+                        line_text = line.strip()
+                        icd9 = line_text[0:6].strip()
 
                         base_length = 3
                         # For ICD9, if it start with E, base code is length 4 instead of 3 
