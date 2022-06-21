@@ -34,6 +34,7 @@ def train(gds, lr=0.01):
             ['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site'],
             nodeProperties=["degree"]
         )
+        print("Training with dx relationships...")
     except Exception as ex:
         G, _ = gds.graph.project(
             'mimic',
@@ -41,6 +42,7 @@ def train(gds, lr=0.01):
             ['age_at_visit', 'has_medical_hx', 'of_sex', 'visit_race', 'visit_site'],
             nodeProperties=["degree"]
         )
+        print("Training with NO dx relationships...")
 
     # Train GraphSAGE using GDS. Many other parameters that can be
     # tuned in GraphSAGE - using defaults except for learning rate and
@@ -52,7 +54,7 @@ def train(gds, lr=0.01):
         modelName = "mimicModel",
         learningRate = lr,
         epochs = 100,
-        searchDepth = 10,
+        searchDepth = 5,
         featureProperties = ["degree"]
     )
 
