@@ -3,17 +3,21 @@
 ####################################################
 
 from neomodel import (ArrayProperty, RelationshipFrom, RelationshipTo,
-                      StringProperty, StructuredNode)
+                      StringProperty, FloatProperty, StructuredNode)
 
 
 class Visit(StructuredNode):
     visit_id = StringProperty(unique_index=True)
     embedding = ArrayProperty()
 
-    sex = RelationshipTo("Sex", "of_sex")
+    sex = StringProperty()
+    race = StringProperty()
+    age = StringProperty()
+
+    #sex = RelationshipTo("Sex", "of_sex")
     care_site = RelationshipTo("CareSite", "visit_site")
-    race = RelationshipTo("Race", "visit_race")
-    age = RelationshipTo("Age", "age_at_visit")
+    #race = RelationshipTo("Race", "visit_race")
+    #age = RelationshipTo("Age", "age_at_visit")
 
     dx = RelationshipTo("Diagnosis", "has_medical_hx")
 
@@ -27,18 +31,25 @@ class Diagnosis(StructuredNode):
     visits = RelationshipFrom("Visit", "has_medical_hx")
 
 
-class Age(StructuredNode):
-    label = StringProperty(unique_index=True)
-    embedding = ArrayProperty()
+# class Age(StructuredNode):
+#     label = StringProperty(unique_index=True)
+#     embedding = ArrayProperty()
 
-    visits = RelationshipFrom("Visit", "age_at_visit")
+#     visits = RelationshipFrom("Visit", "age_at_visit")
 
 
-class Race(StructuredNode):
-    label = StringProperty(unique_index=True)
-    embedding = ArrayProperty()
+# class Race(StructuredNode):
+#     label = StringProperty(unique_index=True)
+#     embedding = ArrayProperty()
 
-    visits = RelationshipFrom("Visit", "visit_race")
+#     visits = RelationshipFrom("Visit", "visit_race")
+
+
+# class Sex(StructuredNode):
+#     label = StringProperty(unique_index=True)
+#     embedding = ArrayProperty()
+
+#     visits = RelationshipFrom("Visit", "of_sex")
 
 
 class CareSite(StructuredNode):
@@ -46,10 +57,3 @@ class CareSite(StructuredNode):
     embedding = ArrayProperty()
 
     visits = RelationshipFrom("Visit", "visit_site")
-
-
-class Sex(StructuredNode):
-    label = StringProperty(unique_index=True)
-    embedding = ArrayProperty()
-
-    visits = RelationshipFrom("Visit", "of_sex")

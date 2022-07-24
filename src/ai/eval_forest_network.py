@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 
-def run(csv_path):
+def run(csv_path, seed=42):
     X = []
     y = []
 
@@ -52,7 +52,7 @@ def run(csv_path):
 
     # training RF
     clf = RandomForestClassifier(
-        random_state=42,
+        random_state=seed,
         min_samples_leaf=2,
         bootstrap=True,
         max_samples=0.8
@@ -71,3 +71,5 @@ def run(csv_path):
     print(f"TN: {tn} TP: {tp} FN: {fn} FP: {fp}")
     print("\n")
     print(classification_report(y_test, y_pred, target_names=["LOS<6", "LOS>6"]))
+
+    return(roc_auc_score(y_test, clf.predict_proba(X_test)[:,1]))

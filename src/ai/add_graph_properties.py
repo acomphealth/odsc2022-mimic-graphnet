@@ -21,11 +21,25 @@ def add_properties(gds):
     gds.run_cypher("MATCH (a) REMOVE a.embedding") # Property for GraphSAGE embedding
 
     # Now we create a projection so we can compute and write the degree property
-    G, _ = gds.graph.project(
-        'mimic',
-        ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
-        ['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site']
-    )
+    # Not the most elegant approach, but easy try/catch to handle either the
+    # graph with ICD9 hierarchy or the one without (no "has_parent_dx" relationship)
+    G = None
+    try:
+        G, _ = gds.graph.project(
+            'mimic',
+            #['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
+            #['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site']
+            ['Visit', 'Diagnosis', 'CareSite'],
+            ['has_medical_hx', 'has_parent_dx', 'visit_site']
+        )
+    except Exception as ex:
+        G, _ = gds.graph.project(
+            'mimic',
+            # ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
+            # ['age_at_visit', 'has_medical_hx', 'of_sex', 'visit_race', 'visit_site']
+            ['Visit', 'Diagnosis', 'CareSite'],
+            ['has_medical_hx', 'visit_site']
+        )
 
     try:
         gds.degree.write( # Compute and write the degree for each node in the graph
