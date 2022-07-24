@@ -68,37 +68,40 @@ class SimpleGraph:
                     race = entry[3]
                     age = entry[4]
 
-                    sex_node = Sex.get_or_create(
-                        {
-                            "label": sex.lower()
-                        }
-                    )
+                    # sex_node = Sex.get_or_create(
+                    #     {
+                    #         "label": sex.lower()
+                    #     }
+                    # )
                     care_site_node = CareSite.get_or_create(
                         {
                             "site_id": str(care_site).lower()
                         }
                     )
-                    race_node = Race.get_or_create(
-                        {
-                            "label": race.lower()
-                        }
-                    )
-                    age_node = Age.get_or_create(
-                        {
-                            "label": age.lower()
-                        }
-                    )
+                    # race_node = Race.get_or_create(
+                    #     {
+                    #         "label": race.lower()
+                    #     }
+                    # )
+                    # age_node = Age.get_or_create(
+                    #     {
+                    #         "label": age.lower()
+                    #     }
+                    # )
                     visit_node = Visit.create_or_update(
                         {
-                            "visit_id": str(visit_id).lower()
+                            "visit_id": str(visit_id).lower(),
+                            "age": age.lower(),
+                            "race": race.lower(),
+                            "sex": sex.lower()
                         }
                     )
                     
                     # Connect each of the data elements to the visit node
-                    visit_node[0].sex.connect(sex_node[0])
                     visit_node[0].care_site.connect(care_site_node[0])
-                    visit_node[0].race.connect(race_node[0])
-                    visit_node[0].age.connect(age_node[0])
+                    # visit_node[0].sex.connect(sex_node[0])
+                    # visit_node[0].race.connect(race_node[0])
+                    # visit_node[0].age.connect(age_node[0])
 
                     # Add diagnosis nodes and connect to the visit
                     for z in range(7, len(header)):

@@ -27,14 +27,18 @@ def add_properties(gds):
     try:
         G, _ = gds.graph.project(
             'mimic',
-            ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
-            ['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site']
+            #['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
+            #['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site']
+            ['Visit', 'Diagnosis', 'CareSite'],
+            ['has_medical_hx', 'has_parent_dx', 'visit_site']
         )
     except Exception as ex:
         G, _ = gds.graph.project(
             'mimic',
-            ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
-            ['age_at_visit', 'has_medical_hx', 'of_sex', 'visit_race', 'visit_site']
+            # ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
+            # ['age_at_visit', 'has_medical_hx', 'of_sex', 'visit_race', 'visit_site']
+            ['Visit', 'Diagnosis', 'CareSite'],
+            ['has_medical_hx', 'visit_site']
         )
 
     try:

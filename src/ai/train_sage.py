@@ -2,7 +2,7 @@
 # Function to train GraphSAGE using GDS library
 ####################################################
 
-def train(gds, lr=0.01):
+def train(gds, lr=0.1, seed=42):
     # Remove existing embeddings if they exist
     print("Removing exisitng embeddings and model")
     gds.run_cypher("MATCH (a) REMOVE a.embedding")
@@ -30,16 +30,20 @@ def train(gds, lr=0.01):
     try:
         G, _ = gds.graph.project(
             'mimic',
-            ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
-            ['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site'],
+            #['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
+            ['Visit', 'Diagnosis', 'CareSite'],
+            #['age_at_visit', 'has_medical_hx', 'has_parent_dx', 'of_sex', 'visit_race', 'visit_site'],
+            ['has_medical_hx', 'has_parent_dx', 'visit_site'],
             nodeProperties=["degree"]
         )
         print("Training with dx relationships...")
     except Exception as ex:
         G, _ = gds.graph.project(
             'mimic',
-            ['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
-            ['age_at_visit', 'has_medical_hx', 'of_sex', 'visit_race', 'visit_site'],
+            #['Visit', 'Sex', 'Race', 'Diagnosis', 'CareSite', 'Age'],
+            ['Visit', 'Diagnosis', 'CareSite'],
+            #['age_at_visit', 'has_medical_hx', 'of_sex', 'visit_race', 'visit_site'],
+            ['has_medical_hx', 'visit_site'],
             nodeProperties=["degree"]
         )
         print("Training with NO dx relationships...")
@@ -53,8 +57,9 @@ def train(gds, lr=0.01):
         G,
         modelName = "mimicModel",
         learningRate = lr,
-        epochs = 100,
-        searchDepth = 5,
+        epochs = 200,
+        searchDepth = 40,
+        randomSeed=seed,
         featureProperties = ["degree"]
     )
 
